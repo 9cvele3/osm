@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	</head>
+
+	<body>
+		<h1> Demonstration of OSM tiles and tile indices </h1>
+
+		<label for="zoomLevel">Zoom Level:</label>
+		<input type="number" id="zoomLevel" name="zoomLevel" min="0" max="4" value="0" onchange="draw()"/>
+
+		<div id="demo">
+		</div>
+		
+		<script>
+			function draw()
+			{
+				var panel = document.getElementById("demo");
+
+				var oldTable = document.getElementById("table");
+
+				if (oldTable != null)
+					oldTable.remove();
+
+				var zoomLevel = document.getElementById("zoomLevel").value;
+				var limit = Math.pow(2, zoomLevel);
+				var endpoint = "https://b.tile.openstreetmap.org/";
+
+				var table = document.createElement("table");
+				table.id = 'table';
+
+				for (var y = 0; y < limit; y++)
+				{
+					var tr = document.createElement("tr");			
+
+					for (var x = 0; x < limit; x++)
+					{
+						var td = document.createElement("td");
+						var tile = document.createElement("img");
+						tile.src = endpoint + "/" + zoomLevel + "/" + x + "/" + y + ".png";
+						tile.setAttribute("class","tooltip");
+						tile.title = "/" + zoomLevel + "/" + x + "/" + y;
+						td.appendChild(tile);
+						tr.appendChild(td);
+					}
+
+					table.appendChild(tr);
+				}
+
+				panel.appendChild(table);
+			}
+
+			draw();
+		</script>
+	</body>
+</html>
