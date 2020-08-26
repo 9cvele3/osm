@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	</head>
+
+	<body>
+		<h1> Demonstration of Bing tiles and tile indices </h1>
+
+		<label for="zoomLevel">Zoom Level:</label>
+		<input type="number" id="zoomLevel" name="zoomLevel" min="1" value="1" onchange="zoomLevelChanged()"/>
+		
+		<label for="x">X</label>
+		<input type="number" id="x" name="x" min="0" value="0" onchange="draw()"/>
+		
+		<label for="y">Y</label>
+		<input type="number" id="y" name="y" min="0" value="0" onchange="draw()"/>
+
+		<div id="demo">
+			<img id="im1"/>
+		</div>
+		<script>
+			var oldZoomLevel = parseInt("1", 10);
+
+			function quadKey(tileX, tileY, levelId)
+			{
+				var quadKey = "";
+
+				for (var i = levelId; i > 0; i--)
+				{
+				    var digit = '0';
+				    var mask = 1 << (i-1);
+
+				    if ((tileX & mask) != 0)
+					digit++;
+
+				    if ((tileY & mask) != 0)
+				    {
+					digit++;
+					digit++;
+				    }
+
+				    quadKey += digit;
+				}
+
+				return quadKey;
+			}
+
+			function zoomLevelChanged()
+			{
+				var zoomLevel = parseInt(document.getElementById("zoomLevel").value, 10);
+				var xEl = document.getElementById("x");
+				var yEl = document.getElementById("y");
+
+				if (zoomLevel > oldZoomLevel)
+				{
+					xEl.value = 2 * xEl.value;
+					yEl.value = 2 * yEl.value;
+				}
+
+				if (zoomLevel < oldZoomLevel)
+				{
+					xEl.value = Math.floor(xEl.value / 2);
+					yEl.value = Math.floor(yEl.value / 2);
+				}
+
+				oldZoomLevel = zoomLevel;
+
+				draw();
+			}
+
+			function draw()
+			{
+				var zoomLevel = document.getElementById("zoomLevel").value;
+				var maxXY = Math.pow(2, zoomLevel) - 1;
+
+				var xEl = document.getElementById("x");
+				var yEl = document.getElementById("y");
+
+				if (xEl.value > maxXY)
+					xEl.value = 0;
+
+				if (yEl.value > maxXY)
+					yEl.value = 0;
+
+				var img = document.getElementById("im1");
+				img.src = "http://t0.tiles.virtualearth.net/tiles/a" + quadKey(xEl.value, yEl.value, zoomLevel) + ".jpeg?g=517&token=";
+			}
+
+			draw();
+			
+			document.getElementById("zoomLevel").value=1;
+			document.getElementById("x").value = 0;
+			document.getElementById("y").value = 0;
+		</script>
+		
+	</body>
+</html>
